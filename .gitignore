@@ -1,6 +1,10 @@
 trash/
 project_exercises.pdf
 
+# Ignore all .out and .err files
+*.out
+*.err
+
 # Python
 
 __pycache__/
