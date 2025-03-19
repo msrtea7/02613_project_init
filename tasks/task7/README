@@ -1,0 +1,11 @@
+##
+mkdir 
+
+## Dynamic scheduling
+
+```bsub < dynamic.sh```
+
+## Dynamic scheduling + LSF static scheduling
+
+```mkdir res_chunk``` where the output files will be
+```bsub < dynamic_lsf_static.sh```
