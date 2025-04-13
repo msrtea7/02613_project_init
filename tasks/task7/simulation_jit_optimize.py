@@ -54,15 +54,15 @@ def summary_stats(u, interior_mask):
 
 
 if __name__ == "__main__":
-    # LOAD_DIR = "/dtu/projects/02613_2025/data/modified_swiss_dwellings/"
-    LOAD_DIR = "../../data/"
+    LOAD_DIR = "/dtu/projects/02613_2025/data/modified_swiss_dwellings/"
+    # LOAD_DIR = "../../data/"
 
-    start0 = time.time()
+    start0 = time.perf_counter()
     with open(join(LOAD_DIR, "building_ids.txt"), "r") as f:
         building_ids = f.read().splitlines()
 
     if len(sys.argv) < 2:
-        N = 4
+        N = 1
     else:
         N = int(sys.argv[1])
     building_ids = building_ids[:N]
@@ -79,14 +79,26 @@ if __name__ == "__main__":
     MAX_ITER = 20_000
     ABS_TOL = 1e-4
 
-    start = time.time()
+    start = time.perf_counter()
     all_u = np.empty_like(all_u0)
-    all_interior_coords = [np.array(np.where(mask)).T for mask in all_interior_mask]
+    # all_interior_coords = [np.array(np.where(mask)).T for mask in all_interior_mask]
+    all_interior_coords = []
+    for mask in all_interior_mask:
+        coords = np.array(np.where(mask)).T
+        coords = coords[np.lexsort((coords[:, 1], coords[:, 0]))]  # row-major sort
+        all_interior_coords.append(coords)
+
+    # warm-up
+    start = time.perf_counter()
+    _ = jacobi(all_u0[0], all_interior_coords[0], 1, ABS_TOL)
+    end = time.perf_counter()
+    print(f"warm-up time: {(end - start):.3f} s")
+
     for i, (u0, interior_coords) in enumerate(zip(all_u0, all_interior_coords)):
         u = jacobi(u0, interior_coords, MAX_ITER, ABS_TOL)
         all_u[i] = u
-    end = time.time()
-    print(f"time: {(end - start) * 1000:.3f} ms")
+    end = time.perf_counter()
+    print(f"execution time with N={N}: {(end - start):.3f} s")
 
     # Print summary statistics in CSV format
     stat_keys = ["mean_temp", "std_temp", "pct_above_18", "pct_below_15"]
@@ -95,5 +107,5 @@ if __name__ == "__main__":
         stats = summary_stats(u, interior_mask)
         print(f"{bid},", ",".join(str(stats[k]) for k in stat_keys))
 
-    end0 = time.time()
-    print(f"total time: {(end0 - start0) * 1000:.3f} ms")
+    end0 = time.perf_counter()
+    print(f"total time: {(end0 - start0):.3f} s")

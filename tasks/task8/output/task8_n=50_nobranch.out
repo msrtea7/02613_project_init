@@ -1,0 +1,208 @@
+Architecture:                         x86_64
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        46 bits physical, 48 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               64
+On-line CPU(s) list:                  0-63
+Vendor ID:                            GenuineIntel
+Model name:                           Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz
+CPU family:                           6
+Model:                                85
+Thread(s) per core:                   2
+Core(s) per socket:                   16
+Socket(s):                            2
+Stepping:                             7
+CPU(s) scaling MHz:                   39%
+CPU max MHz:                          3900.0000
+CPU min MHz:                          1200.0000
+BogoMIPS:                             5800.00
+Flags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_pkg_req pku ospke avx512_vnni md_clear flush_l1d arch_capabilities
+Virtualization:                       VT-x
+L1d cache:                            1 MiB (32 instances)
+L1i cache:                            1 MiB (32 instances)
+L2 cache:                             32 MiB (32 instances)
+L3 cache:                             44 MiB (2 instances)
+NUMA node(s):                         2
+NUMA node0 CPU(s):                    0-15,32-47
+NUMA node1 CPU(s):                    16-31,48-63
+Vulnerability Gather data sampling:   Mitigation; Microcode
+Vulnerability Itlb multihit:          KVM: Mitigation: VMX disabled
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Mitigation; Enhanced IBRS
+Vulnerability Spec rstack overflow:   Not affected
+Vulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Mitigation; TSX disabled
+=============================================
+Sun Apr 13 11:15:45 2025       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.86.15              Driver Version: 570.86.15      CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  |   00000000:37:00.0 Off |                   On |
+| N/A   54C    P0             44W /  250W |     238MiB /  40960MiB |     N/A      Default |
+|                                         |                        |              Enabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| MIG devices:                                                                            |
++------------------+----------------------------------+-----------+-----------------------+
+| GPU  GI  CI  MIG |                     Memory-Usage |        Vol|        Shared         |
+|      ID  ID  Dev |                       BAR1-Usage | SM     Unc| CE ENC  DEC  OFA  JPG |
+|                  |                                  |        ECC|                       |
+|==================+==================================+===========+=======================|
+|  0   13   0   0  |              34MiB /  4864MiB    | 14      0 |  1   0    0    0    0 |
+|                  |                 0MiB /  8191MiB  |           |                       |
++------------------+----------------------------------+-----------+-----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=============================================
+Running with n=50
+simulation_cuda_no_branch.py
+warm-up time: 0.250 s
+execution time with N=50: 36.910 s
+building_id,mean_temp,std_temp,pct_above_18,pct_below_15
+10000, 14.016701434535019,6.3676492622326135,30.966330331633575,55.47538967849264
+10009, 11.01028048638153,5.809286996003361,16.69765805608604,74.93466680068349
+10014, 14.76009423643455,7.028290843423581,38.297265935139755,52.74831538445879
+10019, 14.75219175313747,7.020491283113653,38.191880041912086,52.886542354604735
+10029, 10.622508188742058,6.312460561811112,18.25563221896085,74.51301795448481
+10031, 12.51872099118389,6.276144595273961,24.080075420557996,66.33473764841057
+10051, 13.290568693587785,5.999000745442376,25.97693550756574,62.84890553841633
+10053, 11.374403533368802,6.258990338763394,19.957686882933707,72.38848730606487
+10056, 14.221562289471542,6.1794045077543185,31.770664359612127,57.05454021123968
+10064, 12.729579225705642,6.964127503403579,28.854589132358804,62.675186492768844
+10075, 15.17712319981736,6.44334546715509,39.29975267202544,47.279392279833935
+10079, 15.105831923572193,7.310311159619339,41.94066689251319,49.388762522383004
+10080, 15.788727905768031,7.276695255676388,46.42258819841091,44.66988664752966
+10082, 16.481817927787013,6.706141219645528,48.723152055379074,40.47223934379593
+10083, 15.642338056613623,7.120666233949096,44.870436948965434,45.874420061760624
+10084, 15.103437404180207,7.149927041471728,40.92004216232495,50.25146815238669
+10085, 15.87201886727475,7.191593636270212,46.19291488551234,44.711558809836205
+10086, 14.401349605024498,7.212646858776389,37.29047849202513,52.985983566940554
+10087, 15.087660041744552,7.268110485786865,41.58125639989854,49.843584131069925
+10089, 14.005138326886952,7.26885829436107,35.50778774954371,56.30632760560983
+10090, 14.292348986223814,6.619899290262298,36.6682123811732,51.18710874101553
+10093, 14.107773258270862,6.563872903856071,33.415299954503105,56.39014667331066
+10094, 14.207079018611719,6.7567493066937425,35.406337218847476,54.87878290373776
+10097, 14.357997188117173,6.864222068044872,37.845159605718386,51.274561002676414
+10117, 15.467991377969012,6.682571553234301,44.13410625109789,44.460337775101
+10119, 14.089674182737747,6.7517891686011495,35.08520585130448,54.69260543909918
+10120, 15.282544148744204,8.031762241511615,46.168775716171105,47.71627461636002
+10124, 13.869198858446182,7.03166503893032,34.57151056426444,56.046202963016114
+10126, 13.400895221560917,6.635989514517306,29.673490998941055,61.073067419696436
+10128, 17.429428523492952,6.706558499486138,56.04351758259297,34.869926052029584
+10136, 15.429839044852377,7.273167383733226,44.34338141516802,46.86940789148467
+10144, 12.118610615454028,6.126212822314991,21.841893859516993,68.8482201134709
+10145, 10.662937533667058,5.891477173010235,16.59074372844896,75.26177596406313
+10150, 14.964157995600228,7.494034563459178,41.2050516477199,50.724180776292116
+10161, 13.451501800401758,7.029405189124995,31.821653456440195,59.45789982857822
+10165, 13.055518070277657,6.732036807735771,29.071604938271605,62.0477366255144
+10167, 13.234493289218918,6.813348934796285,30.197673255775193,60.84369478982633
+10168, 13.195184804172143,6.8997928359809775,30.327255804676984,60.48332142204198
+10174, 16.608940831431973,6.955983995108371,49.54587088609365,41.2128288852686
+10176, 16.682368826663488,6.842547771979846,49.90124349737113,40.574317745569864
+10177, 16.648131433708468,6.775457258487117,49.226928328558806,40.82019223046237
+10180, 16.511847069183545,6.854052275230559,48.287360564561034,42.000487984935035
+10182, 16.740702034449036,6.320409984740384,50.90032760611846,37.492045534893585
+10198, 14.439545448068726,7.345024135404759,38.675400291120816,53.180494905385736
+10199, 17.255015246375176,6.978009104834876,53.96834852365918,37.61640952324219
+10200, 12.835381860010695,7.2551693767337655,30.705105474787075,61.61895267851767
+10201, 15.96091362617611,7.271203074177522,47.10770734886752,44.60681114551084
+10202, 13.554783199322024,7.495486091324255,34.06697549887004,58.621123857619075
+10203, 16.816461246696754,6.613476178659371,51.28312357283203,38.8368912962668
+10204, 14.773620587426736,7.063339931095164,39.064742465316534,51.70294477223196
+total time: 37.520 s
+Total job script time: 39 s
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@hpc.dtu.dk>
+Subject: Job 24655998: <task8> in cluster <dcc> Done
+
+Job <task8> was submitted from host <hpclogin1> by user <s242519> in cluster <dcc> at Sun Apr 13 11:15:42 2025
+Job was executed on host(s) <4*n-62-12-22>, in queue <c02613>, as user <s242519> in cluster <dcc> at Sun Apr 13 11:15:43 2025
+</zhome/9d/2/213212> was used as the home directory.
+</zhome/9d/2/213212/02613pyhpc/02613_project_init/tasks/task8> was used as the working directory.
+Started at Sun Apr 13 11:15:43 2025
+Terminated at Sun Apr 13 11:16:24 2025
+Results reported at Sun Apr 13 11:16:24 2025
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/bash
+#BSUB -q c02613
+#BSUB -J task8
+#BSUB -W 30
+#BSUB -R "select[model==XeonGold6226R]"
+#BSUB -R "rusage[mem=30GB]"
+#BSUB -n 4
+#BSUB -R "span[hosts=1]"
+#BSUB -gpu "num=1:mode=exclusive_process"
+#BSUB -o output/task8_%J.out
+#BSUB -e output/task8_%J.err
+
+source /dtu/projects/02613_2025/conda/conda_init.sh
+conda activate 02613
+
+SECONDS=0
+lscpu
+echo "============================================="
+nvidia-smi
+echo "============================================="
+n=50
+echo "Running with n=$n"
+
+# echo "simulation.py"
+# python -u simulation.py $n
+
+# echo "simulation_cuda.py"
+# python -u simulation_cuda.py $n
+
+echo "simulation_cuda_no_branch.py"
+python -u simulation_cuda_no_branch.py $n
+
+echo "Total job script time: ${SECONDS} s"
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   39.54 sec.
+    Max Memory :                                 103 MB
+    Average Memory :                             103.00 MB
+    Total Requested Memory :                     122880.00 MB
+    Delta Memory :                               122777.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                7
+    Run time :                                   58 sec.
+    Turnaround time :                            42 sec.
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <output/task8_24655998.err> for stderr output of this job.
+

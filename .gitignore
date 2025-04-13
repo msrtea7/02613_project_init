@@ -2,8 +2,8 @@ trash/
 project_exercises.pdf
 
 # Ignore all .out and .err files
-*.out
-*.err
+# *.out
+# *.err
 
 # Python
 

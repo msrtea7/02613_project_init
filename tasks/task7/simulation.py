@@ -40,10 +40,10 @@ def summary_stats(u, interior_mask):
 
 
 if __name__ == "__main__":
-    # LOAD_DIR = "/dtu/projects/02613_2025/data/modified_swiss_dwellings/"
-    LOAD_DIR = "../../data/"
+    LOAD_DIR = "/dtu/projects/02613_2025/data/modified_swiss_dwellings/"
+    # LOAD_DIR = "../../data/"
 
-    start0 = time.time()
+    start0 = time.perf_counter()
     with open(join(LOAD_DIR, "building_ids.txt"), "r") as f:
         building_ids = f.read().splitlines()
 
@@ -65,13 +65,13 @@ if __name__ == "__main__":
     MAX_ITER = 20_000
     ABS_TOL = 1e-4
 
-    start = time.time()
+    start = time.perf_counter()
     all_u = np.empty_like(all_u0)
     for i, (u0, interior_mask) in enumerate(zip(all_u0, all_interior_mask)):
         u = jacobi(u0, interior_mask, MAX_ITER, ABS_TOL)
         all_u[i] = u
-    end = time.time()
-    print(f"time: {(end - start) * 1000:.3f} ms")
+    end = time.perf_counter()
+    print(f"execution time with N={N}: {(end - start):.3f} s")
 
     # Print summary statistics in CSV format
     stat_keys = ["mean_temp", "std_temp", "pct_above_18", "pct_below_15"]
@@ -80,5 +80,5 @@ if __name__ == "__main__":
         stats = summary_stats(u, interior_mask)
         print(f"{bid},", ",".join(str(stats[k]) for k in stat_keys))
 
-    end0 = time.time()
-    print(f"total time: {(end0 - start0) * 1000:.3f} ms")
+    end0 = time.perf_counter()
+    print(f"total time: {(end0 - start0):.3f} s")

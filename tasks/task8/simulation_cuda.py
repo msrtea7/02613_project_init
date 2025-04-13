@@ -20,9 +20,7 @@ def jacobi_cuda_kernel(u, u_new, interior_mask):
     # Add padding offset since u is (514, 514) and interior is (512, 512)
     if 1 <= i < u.shape[0] - 1 and 1 <= j < u.shape[1] - 1:
         if interior_mask[i - 1, j - 1]:
-            u_new[i, j] = 0.25 * (
-                    u[i - 1, j] + u[i + 1, j] + u[i, j - 1] + u[i, j + 1]
-            )
+            u_new[i, j] = 0.25 * (u[i - 1, j] + u[i + 1, j] + u[i, j - 1] + u[i, j + 1])
         else:
             u_new[i, j] = u[i, j]  # Keep boundary or non-interior cells unchanged
 
@@ -32,13 +30,13 @@ def jacobi_cuda(u_host, interior_mask_host, max_iter):
     u_new_device = cuda.device_array_like(u_device)
     mask_device = cuda.to_device(interior_mask_host)
 
-    threads_per_block = (16, 16)
-    blocks_per_grid_x = (u_host.shape[0] + threads_per_block[0] - 1) // threads_per_block[0]
-    blocks_per_grid_y = (u_host.shape[1] + threads_per_block[1] - 1) // threads_per_block[1]
-    blocks_per_grid = (blocks_per_grid_x, blocks_per_grid_y)
+    tpb = (32, 32)
+    bpg_x = (u_host.shape[0] + tpb[0] - 1) // tpb[0]
+    bpg_y = (u_host.shape[1] + tpb[1] - 1) // tpb[1]
+    blocks_per_grid = (bpg_x, bpg_y)
 
     for _ in range(max_iter):
-        jacobi_cuda_kernel[blocks_per_grid, threads_per_block](u_device, u_new_device, mask_device)
+        jacobi_cuda_kernel[blocks_per_grid, tpb](u_device, u_new_device, mask_device)
         u_device, u_new_device = u_new_device, u_device  # swap pointers
 
     return u_device.copy_to_host()
@@ -59,10 +57,10 @@ def summary_stats(u, interior_mask):
 
 
 if __name__ == "__main__":
-    # LOAD_DIR = "/dtu/projects/02613_2025/data/modified_swiss_dwellings/"
-    LOAD_DIR = "../../data/"
+    LOAD_DIR = "/dtu/projects/02613_2025/data/modified_swiss_dwellings/"
+    # LOAD_DIR = "../../data/"
 
-    start0 = time.time()
+    start0 = time.perf_counter()
     with open(join(LOAD_DIR, "building_ids.txt"), "r") as f:
         building_ids = f.read().splitlines()
 
@@ -80,17 +78,22 @@ if __name__ == "__main__":
         all_u0[i] = u0
         all_interior_mask[i] = interior_mask
 
-    # Run jacobi iterations for each floor plan
     MAX_ITER = 20_000
     ABS_TOL = 1e-4
 
-    start = time.time()
+    # warm up
+    start = time.perf_counter()
+    _ = jacobi_cuda(all_u0[0], all_interior_mask[0], 1)
+    end = time.perf_counter()
+    print(f"warm-up time: {(end - start):.3f} s")
+
+    start = time.perf_counter()
     all_u = cuda.pinned_array_like(all_u0)
     for i, (u0, interior_mask) in enumerate(zip(all_u0, all_interior_mask)):
         u = jacobi_cuda(u0, interior_mask, MAX_ITER)
         all_u[i] = u
-    end = time.time()
-    print(f"time: {(end - start) * 1000:.3f} ms")
+    end = time.perf_counter()
+    print(f"execution time with N={N}: {(end - start):.3f} s")
 
     # Print summary statistics in CSV format
     stat_keys = ["mean_temp", "std_temp", "pct_above_18", "pct_below_15"]
@@ -99,5 +102,5 @@ if __name__ == "__main__":
         stats = summary_stats(u, interior_mask)
         print(f"{bid},", ",".join(str(stats[k]) for k in stat_keys))
 
-    end0 = time.time()
-    print(f"total time: {(end0 - start0) * 1000:.3f} ms")
+    end0 = time.perf_counter()
+    print(f"total time: {(end0 - start0):.3f} s")

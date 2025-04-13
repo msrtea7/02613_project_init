@@ -81,7 +81,6 @@ if __name__ == "__main__":
 
     start = time.perf_counter()
     all_u = np.empty_like(all_u0)
-    # all_interior_coords = [np.array(np.where(mask)).T for mask in all_interior_mask]
     all_interior_coords = []
     for mask in all_interior_mask:
         coords = np.array(np.where(mask)).T

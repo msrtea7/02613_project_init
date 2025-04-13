@@ -2,7 +2,7 @@ from os.path import join
 import sys
 import numpy as np
 import time
-import numba
+from numba import cuda
 
 
 def load_data(load_dir, bid):
@@ -13,30 +13,30 @@ def load_data(load_dir, bid):
     return u, interior_mask
 
 
-@numba.njit(parallel=True, cache=False)
-def jacobi(u, interior_coords, max_iter, atol=1e-6):
-    u = u.copy()
-    u_new = u.copy()
-    n_coords = interior_coords.shape[0]
+@cuda.jit
+def jacobi_cuda_kernel(u, u_new, interior_mask):
+    j, i = cuda.grid(2)
+    if 1 <= i < u.shape[0] - 1 and 1 <= j < u.shape[1] - 1:
+        val_interior = 0.25 * (u[i - 1, j] + u[i + 1, j] + u[i, j - 1] + u[i, j + 1])
+        m = interior_mask[i - 1, j - 1]
+        u_new[i, j] = m * val_interior + (1 - m) * u[i, j]
+
+
+def jacobi_cuda(u_host, interior_mask_host, max_iter):
+    u_device = cuda.to_device(u_host)
+    u_new_device = cuda.device_array_like(u_device)
+    mask_device = cuda.to_device(interior_mask_host.astype(np.int8))
+
+    tpb = (32, 32)
+    bpg_x = (u_host.shape[0] + tpb[0] - 1) // tpb[0]
+    bpg_y = (u_host.shape[1] + tpb[1] - 1) // tpb[1]
+    blocks_per_grid = (bpg_x, bpg_y)
 
     for _ in range(max_iter):
-        delta_array = np.zeros(n_coords)  # Used to record the error at each point in parallel
+        jacobi_cuda_kernel[blocks_per_grid, tpb](u_device, u_new_device, mask_device)
+        u_device, u_new_device = u_new_device, u_device  # swap pointers
 
-        for k in numba.prange(n_coords):
-            i = interior_coords[k, 0] + 1
-            j = interior_coords[k, 1] + 1
-            val = 0.25 * (u[i + 1, j] + u[i - 1, j] + u[i, j + 1] + u[i, j - 1])
-            diff = abs(u[i, j] - val)
-            delta_array[k] = diff
-            u_new[i, j] = val
-
-        delta = delta_array.max()
-        if delta < atol:
-            return u_new
-
-        u, u_new = u_new, u
-
-    return u
+    return u_device.copy_to_host()
 
 
 def summary_stats(u, interior_mask):
@@ -68,34 +68,26 @@ if __name__ == "__main__":
     building_ids = building_ids[:N]
 
     # Load floor plans
-    all_u0 = np.empty((N, 514, 514))
-    all_interior_mask = np.empty((N, 512, 512), dtype="bool")
+    all_u0 = cuda.pinned_array((N, 514, 514), dtype=np.float64)
+    all_interior_mask = cuda.pinned_array((N, 512, 512), dtype=bool)
     for i, bid in enumerate(building_ids):
         u0, interior_mask = load_data(LOAD_DIR, bid)
         all_u0[i] = u0
         all_interior_mask[i] = interior_mask
 
-    # Run jacobi iterations for each floor plan
     MAX_ITER = 20_000
     ABS_TOL = 1e-4
 
+    # warm up
     start = time.perf_counter()
-    all_u = np.empty_like(all_u0)
-    # all_interior_coords = [np.array(np.where(mask)).T for mask in all_interior_mask]
-    all_interior_coords = []
-    for mask in all_interior_mask:
-        coords = np.array(np.where(mask)).T
-        coords = coords[np.lexsort((coords[:, 1], coords[:, 0]))]  # row-major sort
-        all_interior_coords.append(coords)
-
-    # warm-up
-    start = time.perf_counter()
-    _ = jacobi(all_u0[0], all_interior_coords[0], 1, ABS_TOL)
+    _ = jacobi_cuda(all_u0[0], all_interior_mask[0], 1)
     end = time.perf_counter()
     print(f"warm-up time: {(end - start):.3f} s")
 
-    for i, (u0, interior_coords) in enumerate(zip(all_u0, all_interior_coords)):
-        u = jacobi(u0, interior_coords, MAX_ITER, ABS_TOL)
+    start = time.perf_counter()
+    all_u = cuda.pinned_array_like(all_u0)
+    for i, (u0, interior_mask) in enumerate(zip(all_u0, all_interior_mask)):
+        u = jacobi_cuda(u0, interior_mask, MAX_ITER)
         all_u[i] = u
     end = time.perf_counter()
     print(f"execution time with N={N}: {(end - start):.3f} s")
