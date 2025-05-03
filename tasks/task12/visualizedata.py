@@ -31,5 +31,5 @@ noBuildingsBelow15 = np.sum(below15Vals >= 50)
 
 print(f"Average mean temperature = {avgMeanTemp}")
 print(f"Standard deviation of mean temperatures = {stdMeanTemp}")
-print(f"No buildings where >=50% of area was 18C or more = {noBuildingsOver18}")
-print(f"No buildings where >=50% of area was 15C or less = {noBuildingsBelow15}")
+print(f"Nr of buildings where >=50% of area was 18C or more = {noBuildingsOver18}")
+print(f"Nr of buildings where >=50% of area was 15C or less = {noBuildingsBelow15}")
